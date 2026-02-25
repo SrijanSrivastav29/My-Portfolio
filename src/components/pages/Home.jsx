@@ -231,7 +231,6 @@ export default function Home() {
                 </h2>
                 <div style={{ display:'flex',flexDirection:'column',gap:14 }}>
                   {[
-                    { icon:'🇮🇳', text:'Based in India' },
                     { icon:'👔', text:'Team Manager @ AuraLinqPr' },
                     { icon:'🎓', text:'Vice Chair | IEEE UNS Institute of Technology, VBSPU' },
                     { icon:'💼', text:'Frontend Developer @ Classworks.in' },
