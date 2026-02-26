@@ -230,7 +230,7 @@ export default function Home() {
                   <span style={{ background:'linear-gradient(135deg,#ff6b35,#ff9f6b)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent' }}>me</span>
                 </h2>
                 <div style={{ display:'flex',flexDirection:'column',gap:14 }}>
-                  {[
+                  
                     { icon:'👔', text:'Team Manager @ AuraLinqPr' },
                     { icon:'🎓', text:'Vice Chair | IEEE UNS Institute of Technology, VBSPU' },
                     { icon:'💼', text:'Frontend Developer @ Classworks.in' },
