@@ -351,14 +351,34 @@ export default function Portfolio() {
             Full Stack of Ambition
           </div>
           <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(4.5rem, 7vw, 8.5rem)", lineHeight: 0.9, letterSpacing: "0.02em", marginBottom: 28 }}>
-            <span style={{ color: "#5a6a7e" }}>SRIJAN</span><br />
-            <span style={{ color: "#00e5ff" }}>SRIVAS</span><br />
-            <span style={{ color: "#e2eaf4" }}>TAV</span>
+            <span style={{ color: "#00e5ff" }}>SRIJAN</span><br />
+            <span style={{ color: "#e2eaf4" }}>SRIVASTAV</span>
           </h1>
           <p style={{ fontSize: "1rem", color: "#5a6a7e", lineHeight: 1.85, maxWidth: 440, marginBottom: 40, fontWeight: 300 }}>
             Frontend developer, IEEE leader, and aspiring cybersecurity specialist. 
             Building at the intersection of clean code, community, and digital security — one commit at a time.
           </p>
+          {/* Contact quick links */}
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "10px 22px", marginBottom: 28 }}>
+            {[
+              { icon: "📧", label: "srivastav.srijan@ieee.org", href: "mailto:srivastav.srijan@ieee.org" },
+              { icon: "📱", label: "+91 88539 42888", href: "tel:+918853942888" },
+              { icon: "🐙", label: "SrijanSrivastav29", href: "https://github.com/SrijanSrivastav29" },
+              { icon: "💼", label: "srijansrivastav29", href: "https://www.linkedin.com/in/srijansrivastav29" },
+            ].map((c, i) => (
+              <a key={i} href={c.href} target="_blank" rel="noreferrer" data-hover style={{
+                display: "flex", alignItems: "center", gap: 7,
+                fontFamily: "'Space Mono', monospace", fontSize: "0.62rem",
+                color: "#5a6a7e", textDecoration: "none", letterSpacing: "0.04em",
+                transition: "color 0.2s",
+              }}
+                onMouseEnter={e => e.currentTarget.style.color = "#00e5ff"}
+                onMouseLeave={e => e.currentTarget.style.color = "#5a6a7e"}
+              >
+                <span>{c.icon}</span><span>{c.label}</span>
+              </a>
+            ))}
+          </div>
           <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
             <button data-hover onClick={() => scrollTo("roles")} style={{
               padding: "13px 30px", background: "#00e5ff", color: "#080b10",
@@ -554,7 +574,7 @@ export default function Portfolio() {
               Frontend project, cybersecurity collab, social media campaign, or an IEEE initiative — I'm ready to connect.
             </p>
             <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
-              <a href="mailto:srijan@dev.com" data-hover style={{
+              <a href="mailto:srivastav.srijan@ieee.org" data-hover style={{
                 padding: "13px 30px", background: "#00e5ff", color: "#080b10",
                 fontFamily: "'Space Mono', monospace", fontSize: "0.72rem", fontWeight: 700,
                 letterSpacing: "0.12em", textTransform: "uppercase", textDecoration: "none",
@@ -564,7 +584,16 @@ export default function Portfolio() {
                 onMouseEnter={e => { e.target.style.transform = "translateY(-2px)"; e.target.style.boxShadow = "0 0 28px rgba(0,229,255,0.4)"; }}
                 onMouseLeave={e => { e.target.style.transform = ""; e.target.style.boxShadow = ""; }}
               >Get In Touch</a>
-              <a href="https://linkedin.com" data-hover style={{
+              <a href="https://github.com/SrijanSrivastav29" data-hover target="_blank" rel="noreferrer" style={{
+                padding: "13px 30px", background: "transparent", color: "#e2eaf4",
+                fontFamily: "'Space Mono', monospace", fontSize: "0.72rem",
+                letterSpacing: "0.12em", textTransform: "uppercase", textDecoration: "none",
+                border: "1px solid #1a2332", transition: "border-color 0.2s, color 0.2s",
+              }}
+                onMouseEnter={e => { e.target.style.borderColor = "#00e5ff"; e.target.style.color = "#00e5ff"; }}
+                onMouseLeave={e => { e.target.style.borderColor = "#1a2332"; e.target.style.color = "#e2eaf4"; }}
+              >GitHub</a>
+              <a href="https://www.linkedin.com/in/srijansrivastav29" data-hover target="_blank" rel="noreferrer" style={{
                 padding: "13px 30px", background: "transparent", color: "#e2eaf4",
                 fontFamily: "'Space Mono', monospace", fontSize: "0.72rem",
                 letterSpacing: "0.12em", textTransform: "uppercase", textDecoration: "none",
@@ -583,9 +612,18 @@ export default function Portfolio() {
         <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.8rem", letterSpacing: "0.1em" }}>
           SRIJAN<span style={{ color: "#00e5ff" }}>.</span>DEV
         </div>
-        <div style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.62rem", color: "#5a6a7e", letterSpacing: "0.1em", textAlign: "right", lineHeight: 1.9 }}>
-          Built with React JS · IEEE · Passion<br />
-          © 2025 Srijan Srivastav — All rights reserved
+        <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
+          {[
+            { label: "📧", href: "mailto:srivastav.srijan@ieee.org" },
+            { label: "📱", href: "tel:+918853942888" },
+            { label: "🐙", href: "https://github.com/SrijanSrivastav29" },
+            { label: "💼", href: "https://www.linkedin.com/in/srijansrivastav29" },
+          ].map((c, i) => (
+            <a key={i} href={c.href} target="_blank" rel="noreferrer" data-hover style={{ fontSize: "1.1rem", textDecoration: "none", opacity: 0.6, transition: "opacity 0.2s" }}
+              onMouseEnter={e => e.currentTarget.style.opacity = "1"}
+              onMouseLeave={e => e.currentTarget.style.opacity = "0.6"}
+            >{c.label}</a>
+          ))}
         </div>
       </footer>
     </div>
