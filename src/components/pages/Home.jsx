@@ -1,80 +1,95 @@
-'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from "react";
 
-const ROLES = [
-  { icon: '👔', title: 'Team Manager',       org: 'AuraLinqPr',                             color: '#ff6b35' },
-  { icon: '🏛️', title: 'Vice Chair',         org: 'IEEE UNS Institute of Technology, VBSPU', color: '#845ef7' },
-  { icon: '💻', title: 'Frontend Developer', org: 'Classworks.in',                           color: '#00c9a7' },
-  { icon: '🔧', title: 'Web Dev Intern',     org: 'TechnoHacks',                             color: '#3b9eff' },
+const roles = [
+  {
+    icon: "👔",
+    company: "AuraLinqPr",
+    title: "Team Manager",
+    desc: "Leading and coordinating team operations, driving productivity and strategic alignment across departments.",
+    color: "#00e5ff",
+  },
+  {
+    icon: "🎓",
+    company: "IEEE UNS — VBSPU",
+    title: "Vice Chair",
+    desc: "Steering IEEE community initiatives, organizing tech events, and representing the student chapter at institutional level.",
+    color: "#7b2fff",
+  },
+  {
+    icon: "💻",
+    company: "Classworks.in",
+    title: "Frontend Developer",
+    desc: "Building responsive, performant UIs with React JS — crafting seamless digital learning experiences.",
+    color: "#00e5ff",
+  },
+  {
+    icon: "🛠️",
+    company: "TechnoHacks",
+    title: "Web Dev Intern",
+    desc: "Hands-on internship focused on modern web development practices and real-world project delivery.",
+    color: "#ff3e6c",
+  },
+  {
+    icon: "📣",
+    company: "Passion",
+    title: "Social Media Management",
+    desc: "Crafting digital narratives, growing communities, and building brand presence through strategic content.",
+    color: "#7b2fff",
+  },
+  {
+    icon: "🔐",
+    company: "Deep Interest",
+    title: "Cybersecurity",
+    desc: "Exploring web security, ethical hacking, and secure coding at the intersection of web dev and infosec.",
+    color: "#ff3e6c",
+  },
 ];
 
-const SKILLS = [
-  { icon: '🎨', label: 'Frontend Development',     color: '#ff6b35', items: ['React.js','Next.js','JavaScript ES6+','HTML5 & CSS3','Tailwind CSS','Responsive Design','Git & GitHub'] },
-  { icon: '📣', label: 'Social Media & Marketing', color: '#f7b731', items: ['Content Strategy','Brand Management','Community Building','Analytics & Insights','Campaign Planning'] },
-  { icon: '🔐', label: 'Cybersecurity Interests',  color: '#ff4d6d', items: ['Web Security','OWASP Top 10','CTF Challenges','Secure Coding','Network Fundamentals'] },
+const skills = [
+  { name: "React JS", pct: 90 },
+  { name: "HTML / CSS", pct: 92 },
+  { name: "JavaScript", pct: 85 },
+  { name: "Responsive Design", pct: 88 },
+  { name: "Team Leadership", pct: 87 },
+  { name: "Social Media Strategy", pct: 82 },
 ];
 
-const FACTS = [
-  { icon: '👔', text: 'Team Manager @ AuraLinqPr' },
-  { icon: '🎓', text: 'Vice Chair | IEEE UNS Institute of Technology, VBSPU' },
-  { icon: '💼', text: 'Frontend Developer @ Classworks.in' },
-  { icon: '🛠️', text: 'Web Development Intern @ TechnoHacks' },
-  { icon: '📣', text: 'Passionate about Social Media Management' },
-  { icon: '🔐', text: 'Deeply interested in Cybersecurity' },
-  { icon: '🌱', text: 'Exploring the intersection of web dev & security' },
+const interests = [
+  { icon: "⚛️", title: "React JS Development", desc: "Building modern, component-driven UIs with hooks, context & clean architecture" },
+  { icon: "🔐", title: "Cybersecurity", desc: "Web security, ethical hacking, and secure coding practices" },
+  { icon: "📣", title: "Social Media Management", desc: "Content strategy, community growth, and digital brand building" },
+  { icon: "🏛️", title: "IEEE Community", desc: "Tech community leadership, student chapters & collaborative initiatives" },
+  { icon: "🌱", title: "Always Learning", desc: "Exploring the crossroads of web development and cybersecurity" },
+  { icon: "🤝", title: "Team Management", desc: "Coordinating teams, aligning goals, and driving collaborative outcomes" },
 ];
 
-const OPEN_TO = [
-  { icon: '✅', text: 'Social Media Management opportunities', color: '#00c9a7' },
-  { icon: '🔐', text: 'Cybersecurity projects & collaborations', color: '#ff4d6d' },
-  { icon: '🌍', text: 'Frontend Development freelance / remote', color: '#3b9eff' },
-  { icon: '🤝', text: 'IEEE & Tech Community initiatives', color: '#845ef7' },
+const openTo = [
+  { emoji: "✅", title: "Social Media Management", desc: "Open to roles where strategy meets creativity and community growth." },
+  { emoji: "🤝", title: "IEEE & Tech Community", desc: "Seeking initiatives that make a meaningful impact on student ecosystems." },
+  { emoji: "🔐", title: "Cybersecurity Projects", desc: "Eager to collaborate on CTFs, security research & infosec projects." },
 ];
 
-const IEEE = [
-  { icon: '🏅', text: 'Vice Chair at IEEE UNS Institute of Technology, VBSPU' },
-  { icon: '🤝', text: 'Organizing tech events, workshops & seminars' },
-  { icon: '🌍', text: 'Bridging the gap between academia and industry' },
-];
-
-const WORDS = ['Frontend Developer','IEEE Vice Chair','Team Manager @ AuraLinqPr','Cybersecurity Enthusiast','Social Media Advocate'];
-
-const MARQUEE = ['React.js','Next.js','JavaScript','Tailwind CSS','IEEE','Cybersecurity','Frontend Dev','Social Media','HTML5','CSS3','Git','AuraLinqPr','Classworks.in','TechnoHacks','OWASP','Web Security'];
-
-/* ── Typewriter ── */
-function Typewriter() {
-  const [idx, setIdx]   = useState(0);
-  const [text, setText] = useState('');
-  const [del, setDel]   = useState(false);
-
+function useInView(ref, threshold = 0.15) {
+  const [visible, setVisible] = useState(false);
   useEffect(() => {
-    const word = WORDS[idx % WORDS.length];
-    const id = setTimeout(() => {
-      if (!del && text === word) { setTimeout(() => setDel(true), 1500); return; }
-      if (del  && text === '')   { setDel(false); setIdx(n => n + 1); return; }
-      setText(p => del ? p.slice(0, -1) : word.slice(0, p.length + 1));
-    }, del ? 45 : 90);
-    return () => clearTimeout(id);
-  }, [text, del, idx]);
-
-  return <span style={{ color: '#ff6b35' }}>{text}<span style={{ animation: 'blink 1s step-end infinite' }}>|</span></span>;
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setVisible(true); }, { threshold });
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, [ref, threshold]);
+  return visible;
 }
 
-/* ── Hover card ── */
-function HoverCard({ children, hoverBorder = 'rgba(255,107,53,0.3)', hoverBg = 'rgba(255,107,53,0.04)', style = {} }) {
-  const [hov, setHov] = useState(false);
+function RevealSection({ children, delay = 0, className = "" }) {
+  const ref = useRef(null);
+  const visible = useInView(ref);
   return (
     <div
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
+      ref={ref}
+      className={className}
       style={{
-        background:  hov ? hoverBg  : 'rgba(255,255,255,0.025)',
-        border:      `1px solid ${hov ? hoverBorder : 'rgba(255,255,255,0.07)'}`,
-        borderRadius: 16,
-        transform:   hov ? 'translateY(-5px)' : 'translateY(0)',
-        boxShadow:   hov ? '0 16px 40px rgba(0,0,0,0.3)' : 'none',
-        transition:  'all 0.28s cubic-bezier(.23,1,.32,1)',
-        ...style,
+        opacity: visible ? 1 : 0,
+        transform: visible ? "translateY(0)" : "translateY(32px)",
+        transition: `opacity 0.7s ${delay}s ease, transform 0.7s ${delay}s ease`,
       }}
     >
       {children}
@@ -82,386 +97,497 @@ function HoverCard({ children, hoverBorder = 'rgba(255,107,53,0.3)', hoverBg = '
   );
 }
 
-/* ── Main ── */
-export default function Home() {
-  const [imgHov, setImgHov] = useState(false);
-
+function SkillBar({ name, pct, delay }) {
+  const ref = useRef(null);
+  const visible = useInView(ref);
   return (
-    <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Outfit:wght@300;400;500;600&display=swap');
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        html { scroll-behavior: smooth; }
-        body { background: #05080f; color: #e2e8f0; font-family: 'Outfit', sans-serif; overflow-x: hidden; }
-
-        @keyframes blink    { 0%,100%{opacity:1} 50%{opacity:0} }
-        @keyframes fadeUp   { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
-        @keyframes float    { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
-        @keyframes spin-cw  { to{transform:rotate(360deg)} }
-        @keyframes spin-ccw { to{transform:rotate(-360deg)} }
-        @keyframes gradring { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
-        @keyframes shimmer  { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
-        @keyframes glitch   {
-          0%,93%,100%{clip-path:none;transform:none}
-          94%{clip-path:polygon(0 15%,100% 15%,100% 25%,0 25%);transform:translate(-3px,0)}
-          96%{clip-path:polygon(0 55%,100% 55%,100% 65%,0 65%);transform:translate(3px,0)}
-          98%{clip-path:none;transform:none}
-        }
-        @keyframes tagA     { 0%,100%{transform:translateY(0) rotate(-1.5deg)} 50%{transform:translateY(-8px) rotate(1.5deg)} }
-        @keyframes tagB     { 0%,100%{transform:translateY(0) rotate(1.5deg)}  50%{transform:translateY(-6px) rotate(-1.5deg)} }
-        @keyframes marquee  { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
-        @keyframes scanline { 0%{top:0} 100%{top:100vh} }
-        @keyframes pulseGlow{ 0%,100%{opacity:.4} 50%{opacity:1} }
-
-        .fu1{animation:fadeUp .7s .05s cubic-bezier(.23,1,.32,1) both}
-        .fu2{animation:fadeUp .7s .18s cubic-bezier(.23,1,.32,1) both}
-        .fu3{animation:fadeUp .7s .30s cubic-bezier(.23,1,.32,1) both}
-        .fu4{animation:fadeUp .7s .42s cubic-bezier(.23,1,.32,1) both}
-        .fu5{animation:fadeUp .7s .54s cubic-bezier(.23,1,.32,1) both}
-        .fu6{animation:fadeUp .7s .24s cubic-bezier(.23,1,.32,1) both}
-
-        .shimmer {
-          background: linear-gradient(90deg,#ff6b35 0%,#ffb38a 35%,#fff 50%,#ffb38a 65%,#ff6b35 100%);
-          background-size: 200% auto;
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-          animation: shimmer 3s linear infinite;
-        }
-        .glitch { animation: glitch 7s infinite; }
-        .marquee-row { display:flex; animation: marquee 22s linear infinite; width: max-content; }
-
-        ::-webkit-scrollbar { width: 3px; }
-        ::-webkit-scrollbar-track { background: #05080f; }
-        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg,#ff6b35,#845ef7); border-radius: 3px; }
-
-        a { text-decoration: none; }
-        section { position: relative; }
-      `}</style>
-
-      {/* Fixed background orbs */}
-      <div style={{ position:'fixed', inset:0, zIndex:0, pointerEvents:'none', overflow:'hidden' }}>
-        <div style={{ position:'absolute', width:700, height:700, borderRadius:'50%', background:'radial-gradient(circle,rgba(255,107,53,0.07) 0%,transparent 70%)', top:-180, right:-180 }} />
-        <div style={{ position:'absolute', width:550, height:550, borderRadius:'50%', background:'radial-gradient(circle,rgba(132,94,247,0.06) 0%,transparent 70%)', bottom:-100, left:-120 }} />
-        <div style={{ position:'absolute', width:350, height:350, borderRadius:'50%', background:'radial-gradient(circle,rgba(0,201,167,0.04) 0%,transparent 70%)', top:'45%', left:'40%' }} />
-        {/* Grid */}
-        <div style={{ position:'absolute', inset:0, backgroundImage:'linear-gradient(rgba(255,107,53,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,107,53,0.02) 1px,transparent 1px)', backgroundSize:'60px 60px' }} />
-        {/* Scanline */}
-        <div style={{ position:'absolute', left:0, right:0, height:2, background:'linear-gradient(90deg,transparent,rgba(255,107,53,0.1),transparent)', animation:'scanline 10s linear infinite' }} />
+    <div ref={ref} style={{ marginBottom: 18 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 7 }}>
+        <span style={{ fontSize: "0.85rem", fontWeight: 500, color: "#e2eaf4" }}>{name}</span>
+        <span style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.7rem", color: "#00e5ff" }}>{pct}%</span>
       </div>
-
-      <main style={{ position:'relative', zIndex:1 }}>
-
-        {/* ══ HERO ══════════════════════════════════════════════ */}
-        <section style={{ minHeight:'100vh', display:'flex', alignItems:'center', padding:'110px 6% 80px' }}>
-          <div style={{ maxWidth:1180, margin:'0 auto', width:'100%', display:'flex', alignItems:'center', gap:80, flexWrap:'wrap' }}>
-
-            {/* Left */}
-            <div style={{ flex:1, minWidth:300 }}>
-
-              <h1 className="fu1" style={{ fontFamily:'Syne,sans-serif', fontWeight:800, fontSize:'clamp(2.8rem,5.5vw,4.8rem)', lineHeight:1.06, letterSpacing:'-0.025em', marginBottom:14 }}>
-                Hi, I'm <span className="shimmer glitch">Srijan</span>
-                <br />
-                <span style={{ color:'rgba(255,255,255,0.9)' }}>Srivastav</span>
-              </h1>
-
-              <h2 className="fu2" style={{ fontFamily:'Syne,sans-serif', fontWeight:600, fontSize:'clamp(1rem,2.2vw,1.4rem)', color:'#7a8399', marginBottom:20, minHeight:32 }}>
-                <Typewriter />
-              </h2>
-
-              {/* Summary */}
-              <p className="fu3" style={{ fontSize:13.5, lineHeight:2.1, color:'#5c6880', maxWidth:520, marginBottom:36 }}>
-                <span style={{ color:'#845ef7', fontWeight:600 }}>Vice Chair</span>
-                <span style={{ color:'rgba(255,255,255,0.1)', margin:'0 8px' }}>|</span>
-                IEEE UNS Institute of Technology, VBSPU
-                <span style={{ color:'rgba(255,255,255,0.1)', margin:'0 8px' }}>|</span>
-                <span style={{ color:'#00c9a7', fontWeight:600 }}>Frontend Developer</span>
-                <span style={{ color:'rgba(255,255,255,0.1)', margin:'0 7px' }}>@</span>
-                Classworks.in
-                <span style={{ color:'rgba(255,255,255,0.1)', margin:'0 8px' }}>|</span>
-                <span style={{ color:'#3b9eff', fontWeight:600 }}>Web Dev Intern</span>
-                <span style={{ color:'rgba(255,255,255,0.1)', margin:'0 7px' }}>@</span>
-                TechnoHacks
-              </p>
-
-              {/* CTAs */}
-              <div className="fu4" style={{ display:'flex', gap:12, flexWrap:'wrap', marginBottom:44 }}>
-                <a href="#roles" style={{ background:'linear-gradient(135deg,#ff6b35,#e83d00)', color:'#fff', padding:'13px 30px', borderRadius:12, fontFamily:'Syne,sans-serif', fontWeight:700, fontSize:14, boxShadow:'0 6px 24px rgba(255,107,53,0.35)', transition:'all 0.25s ease' }}
-                  onMouseEnter={e=>e.currentTarget.style.transform='translateY(-3px)'}
-                  onMouseLeave={e=>e.currentTarget.style.transform='translateY(0)'}
-                >Explore Roles →</a>
-                <a href="#contact" style={{ background:'rgba(255,255,255,0.05)', color:'#c0c8dc', padding:'13px 30px', borderRadius:12, fontFamily:'Syne,sans-serif', fontWeight:600, fontSize:14, border:'1.5px solid rgba(255,255,255,0.12)', transition:'all 0.25s ease' }}
-                  onMouseEnter={e=>{e.currentTarget.style.transform='translateY(-3px)';e.currentTarget.style.background='rgba(255,107,53,0.09)';}}
-                  onMouseLeave={e=>{e.currentTarget.style.transform='translateY(0)';e.currentTarget.style.background='rgba(255,255,255,0.05)';}}
-                >Contact Me</a>
-              </div>
-
-              {/* Social */}
-              <div className="fu5" style={{ display:'flex', alignItems:'center' }}>
-                {[
-                  { label:'✉ Email',    href:'mailto:srivastav.srijan@ieee.org' },
-                  { label:'⌥ GitHub',   href:'https://github.com/SrijanSrivastav29' },
-                  { label:'◈ LinkedIn', href:'https://www.linkedin.com/in/srijansrivastav29' },
-                ].map((s, i) => (
-                  <a key={i} href={s.href} target={i > 0 ? '_blank' : undefined} rel="noreferrer"
-                    style={{ color:'#3d4a60', fontSize:12, fontFamily:'Syne,sans-serif', fontWeight:700, letterSpacing:.5, padding:'8px 13px', borderRadius:8, transition:'all .2s ease', borderRight: i < 2 ? '1px solid rgba(255,255,255,0.06)' : 'none' }}
-                    onMouseEnter={e=>{e.currentTarget.style.color='#ff6b35';e.currentTarget.style.background='rgba(255,107,53,0.08)';}}
-                    onMouseLeave={e=>{e.currentTarget.style.color='#3d4a60';e.currentTarget.style.background='transparent';}}
-                  >{s.label}</a>
-                ))}
-              </div>
-            </div>
-
-            {/* Right — Avatar */}
-            <div className="fu6" style={{ display:'flex', justifyContent:'center', alignItems:'center', position:'relative', flex:'0 0 auto' }}>
-
-              {/* Rings */}
-              <div style={{ position:'absolute', width:370, height:370, borderRadius:'50%', border:'1px dashed rgba(255,107,53,0.13)', animation:'spin-cw 24s linear infinite', pointerEvents:'none' }} />
-              <div style={{ position:'absolute', width:305, height:305, borderRadius:'50%', border:'1px solid rgba(132,94,247,0.1)', animation:'spin-ccw 17s linear infinite', pointerEvents:'none' }} />
-
-              {/* Orbiting dots */}
-              <div style={{ position:'absolute', width:370, height:370, animation:'spin-cw 11s linear infinite' }}>
-                <div style={{ position:'absolute', top:'50%', left:'50%', width:9, height:9, borderRadius:'50%', background:'#ff6b35', boxShadow:'0 0 10px #ff6b35', transform:'translate(-50%,-50%) translateX(185px)' }} />
-              </div>
-              <div style={{ position:'absolute', width:305, height:305, animation:'spin-ccw 8s linear infinite' }}>
-                <div style={{ position:'absolute', top:'50%', left:'50%', width:7, height:7, borderRadius:'50%', background:'#845ef7', boxShadow:'0 0 9px #845ef7', transform:'translate(-50%,-50%) translateX(152px)' }} />
-              </div>
-              <div style={{ position:'absolute', width:370, height:370, animation:'spin-cw 16s linear infinite' }}>
-                <div style={{ position:'absolute', top:'50%', left:'50%', width:6, height:6, borderRadius:'50%', background:'#00c9a7', boxShadow:'0 0 9px #00c9a7', transform:'translate(-50%,-50%) translateX(185px)' }} />
-              </div>
-
-              {/* Image */}
-              <div
-                onMouseEnter={() => setImgHov(true)}
-                onMouseLeave={() => setImgHov(false)}
-                style={{ position:'relative', width:230, height:230, borderRadius:'50%', animation:'float 6s ease-in-out infinite', cursor:'default', flexShrink:0 }}
-              >
-                {/* Gradient ring */}
-                <div style={{ position:'absolute', inset:-4, borderRadius:'50%', background:'linear-gradient(135deg,#ff6b35,#845ef7,#00c9a7,#ff6b35)', backgroundSize:'300% 300%', animation:'gradring 4s ease infinite' }} />
-                {/* Dark fill */}
-                <div style={{ position:'absolute', inset:0, borderRadius:'50%', background:'#05080f', zIndex:1 }} />
-                {/* Photo */}
-                <div style={{ position:'absolute', inset:4, borderRadius:'50%', overflow:'hidden', zIndex:2 }}>
-                  <img
-                    src="/assets/profile.jpg"
-                    alt="Srijan Srivastav"
-                    style={{ width:'100%', height:'100%', objectFit:'cover', objectPosition:'center top', transition:'transform .5s ease, filter .4s ease', transform: imgHov ? 'scale(1.08)' : 'scale(1)', filter: imgHov ? 'brightness(1.1)' : 'brightness(1)' }}
-                  />
-                  <div style={{ position:'absolute', inset:0, background:'linear-gradient(180deg,transparent 45%,rgba(255,107,53,0.22))', opacity: imgHov ? 1 : 0, transition:'opacity .4s ease' }} />
-                </div>
-                {/* Pulse ring */}
-                <div style={{ position:'absolute', inset:-4, borderRadius:'50%', border:'2px solid rgba(255,107,53,0.3)', animation:'pulseGlow 3s ease infinite', zIndex:0 }} />
-              </div>
-
-              {/* Floating badges */}
-              <div style={{ position:'absolute', top:-5, right:-60, background:'rgba(8,12,22,0.9)', backdropFilter:'blur(10px)', border:'1px solid rgba(255,107,53,0.3)', borderRadius:11, padding:'7px 12px', fontSize:11.5, fontFamily:'Syne,sans-serif', fontWeight:700, color:'#ff6b35', whiteSpace:'nowrap', animation:'tagA 4s ease-in-out infinite', boxShadow:'0 4px 18px rgba(255,107,53,0.18)' }}>
-                💻 Classworks.in
-              </div>
-              <div style={{ position:'absolute', bottom:14, left:-70, background:'rgba(8,12,22,0.9)', backdropFilter:'blur(10px)', border:'1px solid rgba(132,94,247,0.3)', borderRadius:11, padding:'7px 12px', fontSize:11.5, fontFamily:'Syne,sans-serif', fontWeight:700, color:'#845ef7', whiteSpace:'nowrap', animation:'tagB 5s ease-in-out infinite', boxShadow:'0 4px 18px rgba(132,94,247,0.18)' }}>
-                ⚡ IEEE Vice Chair
-              </div>
-              <div style={{ position:'absolute', top:'55%', right:-68, background:'rgba(8,12,22,0.9)', backdropFilter:'blur(10px)', border:'1px solid rgba(0,201,167,0.3)', borderRadius:11, padding:'7px 12px', fontSize:11.5, fontFamily:'Syne,sans-serif', fontWeight:700, color:'#00c9a7', whiteSpace:'nowrap', animation:'tagA 6s ease-in-out 1s infinite', boxShadow:'0 4px 18px rgba(0,201,167,0.12)' }}>
-                🔐 Cyber Curious
-              </div>
-            </div>
-
-          </div>
-        </section>
-
-        {/* ── Marquee ── */}
-        <div style={{ overflow:'hidden', background:'rgba(255,107,53,0.03)', borderTop:'1px solid rgba(255,107,53,0.07)', borderBottom:'1px solid rgba(255,107,53,0.07)', padding:'12px 0' }}>
-          <div className="marquee-row">
-            {[...MARQUEE, ...MARQUEE].map((t, i) => (
-              <span key={i} style={{ fontFamily:'Syne,sans-serif', fontWeight:700, fontSize:11, letterSpacing:2, color: i%3===0?'#ff6b35':i%3===1?'#845ef7':'#00c9a7', textTransform:'uppercase', padding:'0 24px', whiteSpace:'nowrap', opacity:.6 }}>
-                {t} <span style={{ opacity:.25 }}>·</span>
-              </span>
-            ))}
-          </div>
-        </div>
-
-        {/* ══ ABOUT ══════════════════════════════════════════════ */}
-        <section id="about" style={{ padding:'100px 6%' }}>
-          <div style={{ maxWidth:1180, margin:'0 auto' }}>
-            <SLabel>About Me</SLabel>
-            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(290px,1fr))', gap:44, alignItems:'start' }}>
-              <div>
-                <h2 style={{ fontFamily:'Syne,sans-serif', fontWeight:800, fontSize:'clamp(1.8rem,3vw,2.5rem)', lineHeight:1.18, marginBottom:28 }}>
-                  A bit about <span style={{ background:'linear-gradient(135deg,#ff6b35,#ff9f6b)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent' }}>me</span>
-                </h2>
-                <div style={{ display:'flex', flexDirection:'column', gap:9 }}>
-                  {FACTS.map((f, i) => (
-                    <div key={i}
-                      style={{ display:'flex', alignItems:'flex-start', gap:12, padding:'12px 15px', background:'rgba(255,255,255,0.025)', border:'1px solid rgba(255,255,255,0.06)', borderRadius:13, transition:'all .25s cubic-bezier(.23,1,.32,1)', cursor:'default' }}
-                      onMouseEnter={e=>{e.currentTarget.style.borderColor='rgba(255,107,53,0.28)';e.currentTarget.style.background='rgba(255,107,53,0.045)';e.currentTarget.style.transform='translateX(7px)';}}
-                      onMouseLeave={e=>{e.currentTarget.style.borderColor='rgba(255,255,255,0.06)';e.currentTarget.style.background='rgba(255,255,255,0.025)';e.currentTarget.style.transform='translateX(0)';}}
-                    >
-                      <span style={{ fontSize:18, flexShrink:0, marginTop:2 }}>{f.icon}</span>
-                      <span style={{ fontSize:14, color:'#9aa3b8', lineHeight:1.65 }}>{f.text}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div style={{ background:'rgba(255,255,255,0.025)', border:'1px solid rgba(255,255,255,0.07)', borderRadius:22, padding:'28px' }}>
-                <div style={{ fontSize:10.5, fontFamily:'Syne,sans-serif', fontWeight:700, color:'#55607a', letterSpacing:2.5, marginBottom:20 }}>CURRENT FOCUS 🌱</div>
-                {['Web Dev × Security Intersection','IEEE Community Leadership','Social Media Growth Strategies'].map((f, i) => (
-                  <div key={i} style={{ display:'flex', alignItems:'center', gap:12, marginBottom:15, transition:'transform .2s ease', cursor:'default' }}
-                    onMouseEnter={e=>e.currentTarget.style.transform='translateX(6px)'}
-                    onMouseLeave={e=>e.currentTarget.style.transform='translateX(0)'}
-                  >
-                    <div style={{ width:6, height:6, borderRadius:'50%', background:'#ff6b35', flexShrink:0, boxShadow:'0 0 7px #ff6b35' }} />
-                    <span style={{ fontSize:13.5, color:'#8892aa' }}>{f}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ══ ROLES ══════════════════════════════════════════════ */}
-        <section id="roles" style={{ padding:'90px 6%', background:'linear-gradient(180deg,rgba(255,107,53,0.03),transparent)' }}>
-          <div style={{ maxWidth:1180, margin:'0 auto' }}>
-            <SLabel>Current Roles</SLabel>
-            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))', gap:16 }}>
-              {ROLES.map(r => (
-                <HoverCard key={r.title} hoverBorder={r.color+'55'} hoverBg={r.color+'12'} style={{ padding:'24px 22px 24px 26px', position:'relative', overflow:'hidden' }}>
-                  <div style={{ position:'absolute', top:0, left:0, bottom:0, width:3, background:`linear-gradient(180deg,${r.color},transparent)`, borderRadius:'16px 0 0 16px' }} />
-                  <div style={{ position:'absolute', top:-20, right:-20, width:80, height:80, borderRadius:'50%', background:`radial-gradient(circle,${r.color}18,transparent 70%)` }} />
-                  <div style={{ fontSize:28, marginBottom:12 }}>{r.icon}</div>
-                  <div style={{ fontFamily:'Syne,sans-serif', fontWeight:700, fontSize:15, color:'#dde3f0', marginBottom:5 }}>{r.title}</div>
-                  <div style={{ fontSize:12.5, color:r.color, fontFamily:'Syne,sans-serif', fontWeight:600 }}>{r.org}</div>
-                </HoverCard>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ══ SKILLS ══════════════════════════════════════════════ */}
-        <section id="skills" style={{ padding:'90px 6%' }}>
-          <div style={{ maxWidth:1180, margin:'0 auto' }}>
-            <SLabel>Tech Stack & Skills</SLabel>
-            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(275px,1fr))', gap:20 }}>
-              {SKILLS.map(g => (
-                <HoverCard key={g.label} hoverBorder={g.color+'44'} hoverBg='rgba(255,255,255,0.03)' style={{ padding:'26px 22px', position:'relative', overflow:'hidden', height:'100%' }}>
-                  <div style={{ position:'absolute', top:-26, right:-26, width:88, height:88, borderRadius:'50%', background:`radial-gradient(circle,${g.color}14,transparent 70%)` }} />
-                  <div style={{ display:'flex', alignItems:'center', gap:11, marginBottom:18 }}>
-                    <div style={{ width:40, height:40, borderRadius:11, background:`${g.color}14`, border:`1px solid ${g.color}2e`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:18 }}>{g.icon}</div>
-                    <span style={{ fontFamily:'Syne,sans-serif', fontWeight:700, fontSize:15, color:'#dde3f0' }}>{g.label}</span>
-                  </div>
-                  <div style={{ display:'flex', flexWrap:'wrap', gap:7 }}>
-                    {g.items.map(s => <SkillPill key={s} name={s} color={g.color} />)}
-                  </div>
-                </HoverCard>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ══ IEEE ══════════════════════════════════════════════ */}
-        <section id="ieee" style={{ padding:'90px 6%', background:'linear-gradient(180deg,rgba(132,94,247,0.04),transparent)' }}>
-          <div style={{ maxWidth:1180, margin:'0 auto' }}>
-            <SLabel>IEEE & Community</SLabel>
-            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(275px,1fr))', gap:16 }}>
-              {IEEE.map((w, i) => (
-                <div key={i}
-                  style={{ display:'flex', alignItems:'flex-start', gap:14, background:'rgba(132,94,247,0.06)', border:'1px solid rgba(132,94,247,0.14)', borderRadius:18, padding:'22px 20px', transition:'all .28s cubic-bezier(.23,1,.32,1)', cursor:'default' }}
-                  onMouseEnter={e=>{e.currentTarget.style.borderColor='rgba(132,94,247,0.42)';e.currentTarget.style.transform='translateY(-5px)';e.currentTarget.style.background='rgba(132,94,247,0.1)';e.currentTarget.style.boxShadow='0 14px 34px rgba(132,94,247,0.13)';}}
-                  onMouseLeave={e=>{e.currentTarget.style.borderColor='rgba(132,94,247,0.14)';e.currentTarget.style.transform='translateY(0)';e.currentTarget.style.background='rgba(132,94,247,0.06)';e.currentTarget.style.boxShadow='none';}}
-                >
-                  <div style={{ width:40, height:40, borderRadius:11, background:'rgba(132,94,247,0.14)', border:'1px solid rgba(132,94,247,0.28)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:18, flexShrink:0 }}>{w.icon}</div>
-                  <p style={{ fontSize:14, color:'#9aa3b8', lineHeight:1.7, marginTop:5 }}>{w.text}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ══ OPEN TO ══════════════════════════════════════════════ */}
-        <section id="open" style={{ padding:'90px 6%' }}>
-          <div style={{ maxWidth:1180, margin:'0 auto' }}>
-            <SLabel>Open To</SLabel>
-            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(240px,1fr))', gap:14 }}>
-              {OPEN_TO.map((o, i) => (
-                <div key={i}
-                  style={{ display:'flex', alignItems:'center', gap:12, background:'rgba(255,255,255,0.025)', border:'1px solid rgba(255,255,255,0.07)', borderRadius:15, padding:'17px 18px', transition:'all .25s cubic-bezier(.23,1,.32,1)', cursor:'default' }}
-                  onMouseEnter={e=>{e.currentTarget.style.borderColor=o.color+'44';e.currentTarget.style.background=o.color+'0a';e.currentTarget.style.transform='translateY(-4px)';e.currentTarget.style.boxShadow=`0 10px 26px ${o.color}14`;}}
-                  onMouseLeave={e=>{e.currentTarget.style.borderColor='rgba(255,255,255,0.07)';e.currentTarget.style.background='rgba(255,255,255,0.025)';e.currentTarget.style.transform='translateY(0)';e.currentTarget.style.boxShadow='none';}}
-                >
-                  <div style={{ width:38, height:38, borderRadius:10, background:`${o.color}14`, border:`1px solid ${o.color}24`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:18, flexShrink:0 }}>{o.icon}</div>
-                  <span style={{ fontSize:13.5, color:'#9aa3b8', lineHeight:1.55 }}>{o.text}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ══ CONTACT ══════════════════════════════════════════════ */}
-        <section id="contact" style={{ padding:'120px 6%', background:'linear-gradient(180deg,transparent,rgba(255,107,53,0.04))', overflow:'hidden' }}>
-          <div style={{ position:'absolute', bottom:-80, left:'50%', transform:'translateX(-50%)', width:500, height:500, borderRadius:'50%', background:'radial-gradient(circle,rgba(255,107,53,0.055),transparent 70%)', pointerEvents:'none' }} />
-          <div style={{ maxWidth:680, margin:'0 auto', textAlign:'center', position:'relative' }}>
-            <SLabel center>Contact Me</SLabel>
-            <h2 style={{ fontFamily:'Syne,sans-serif', fontWeight:800, fontSize:'clamp(2rem,4.5vw,3.2rem)', lineHeight:1.1, marginBottom:14 }}>
-              Let's Work <span className="shimmer">Together</span>
-            </h2>
-            <p style={{ color:'#6b7590', fontSize:15, lineHeight:1.9, maxWidth:440, margin:'0 auto 44px' }}>
-              Whether it's a project, collaboration, or just a chat about tech, security, or IEEE — my inbox is always open.
-            </p>
-            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:13, marginBottom:30, textAlign:'left' }}>
-              {[
-                { href:'mailto:srivastav.srijan@ieee.org', icon:'📧', label:'EMAIL', val:'srivastav.srijan@ieee.org', color:'#ff6b35' },
-                { href:'tel:+918853942888',               icon:'📱', label:'PHONE', val:'+91 88539 42888',           color:'#00c9a7' },
-              ].map(c => (
-                <a key={c.label} href={c.href}
-                  style={{ display:'flex', alignItems:'center', gap:12, background:'rgba(255,255,255,0.03)', border:'1px solid rgba(255,255,255,0.07)', borderRadius:17, padding:'18px', transition:'all .28s cubic-bezier(.23,1,.32,1)' }}
-                  onMouseEnter={e=>{e.currentTarget.style.borderColor=c.color+'44';e.currentTarget.style.transform='translateY(-4px)';e.currentTarget.style.boxShadow=`0 12px 32px ${c.color}16`;e.currentTarget.style.background=c.color+'08';}}
-                  onMouseLeave={e=>{e.currentTarget.style.borderColor='rgba(255,255,255,0.07)';e.currentTarget.style.transform='translateY(0)';e.currentTarget.style.boxShadow='none';e.currentTarget.style.background='rgba(255,255,255,0.03)';}}
-                >
-                  <div style={{ width:44, height:44, borderRadius:12, background:`${c.color}14`, border:`1px solid ${c.color}28`, display:'flex', alignItems:'center', justifyContent:'center', fontSize:20, flexShrink:0 }}>{c.icon}</div>
-                  <div>
-                    <div style={{ fontSize:10, color:'#55607a', fontFamily:'Syne,sans-serif', fontWeight:700, letterSpacing:1.5, marginBottom:3 }}>{c.label}</div>
-                    <div style={{ fontSize:12.5, color:'#c0c8dc', fontFamily:'Syne,sans-serif', fontWeight:600 }}>{c.val}</div>
-                  </div>
-                </a>
-              ))}
-            </div>
-            <div style={{ display:'flex', gap:12, justifyContent:'center', flexWrap:'wrap' }}>
-              <a href="mailto:srivastav.srijan@ieee.org"
-                style={{ background:'linear-gradient(135deg,#ff6b35,#e83d00)', color:'#fff', padding:'13px 32px', borderRadius:12, fontFamily:'Syne,sans-serif', fontWeight:700, fontSize:14, boxShadow:'0 6px 24px rgba(255,107,53,0.35)', transition:'all .25s ease' }}
-                onMouseEnter={e=>e.currentTarget.style.transform='translateY(-3px)'}
-                onMouseLeave={e=>e.currentTarget.style.transform='translateY(0)'}
-              >Send Email ✉️</a>
-              <a href="tel:+918853942888"
-                style={{ background:'rgba(255,255,255,0.05)', color:'#c0c8dc', padding:'13px 32px', borderRadius:12, fontFamily:'Syne,sans-serif', fontWeight:600, fontSize:14, border:'1.5px solid rgba(255,255,255,0.12)', transition:'all .25s ease' }}
-                onMouseEnter={e=>{e.currentTarget.style.transform='translateY(-3px)';e.currentTarget.style.background='rgba(0,201,167,0.09)';}}
-                onMouseLeave={e=>{e.currentTarget.style.transform='translateY(0)';e.currentTarget.style.background='rgba(255,255,255,0.05)';}}
-              >Call Now 📱</a>
-            </div>
-          </div>
-        </section>
-
-      </main>
-    </>
-  );
-}
-
-/* ── helpers ── */
-function SLabel({ children, center }) {
-  return (
-    <div style={{ display:'flex', justifyContent: center ? 'center' : 'flex-start', marginBottom:38 }}>
-      <div style={{ display:'inline-flex', alignItems:'center', gap:10 }}>
-        <div style={{ height:1, width:24, background:'linear-gradient(90deg,transparent,#ff6b35)' }} />
-        <span style={{ fontFamily:'Syne,sans-serif', fontSize:11, fontWeight:700, letterSpacing:3.5, color:'#ff6b35', textTransform:'uppercase' }}>{children}</span>
-        <div style={{ height:1, width:24, background:'linear-gradient(90deg,#ff6b35,transparent)' }} />
+      <div style={{ height: 2, background: "#1a2332", position: "relative", overflow: "hidden" }}>
+        <div style={{
+          position: "absolute", top: 0, left: 0, height: "100%",
+          background: "linear-gradient(90deg, #00e5ff, #7b2fff)",
+          width: visible ? `${pct}%` : "0%",
+          transition: `width 1.2s ${delay}s cubic-bezier(.4,0,.2,1)`,
+        }} />
       </div>
     </div>
   );
 }
 
-function SkillPill({ name, color }) {
-  const [hov, setHov] = useState(false);
+function RoleCard({ icon, company, title, desc, color }) {
+  const [hovered, setHovered] = useState(false);
   return (
-    <span
-      onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
-      style={{ display:'inline-block', padding:'6px 13px', borderRadius:100, fontSize:12.5, fontFamily:'Syne,sans-serif', fontWeight:600, cursor:'default', background: hov?`${color}1a`:'rgba(255,255,255,0.04)', border:`1px solid ${hov?color+'66':'rgba(255,255,255,0.09)'}`, color: hov?color:'#9aa3b8', transform: hov?'scale(1.07) translateY(-2px)':'scale(1)', transition:'all .2s cubic-bezier(.23,1,.32,1)' }}
-    >{name}</span>
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        background: hovered ? "#111923" : "#0f1923",
+        padding: "36px 28px",
+        position: "relative",
+        overflow: "hidden",
+        cursor: "default",
+        transition: "background 0.3s",
+        borderRight: "1px solid #1a2332",
+        borderBottom: "1px solid #1a2332",
+      }}
+    >
+      <div style={{
+        position: "absolute", bottom: 0, left: 0, right: 0, height: 2,
+        background: color,
+        transform: hovered ? "scaleX(1)" : "scaleX(0)",
+        transformOrigin: "left",
+        transition: "transform 0.4s ease",
+      }} />
+      <span style={{ fontSize: "1.8rem", marginBottom: 16, display: "block" }}>{icon}</span>
+      <div style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.62rem", color, letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 8 }}>{company}</div>
+      <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.5rem", letterSpacing: "0.05em", marginBottom: 12, color: "#e2eaf4", lineHeight: 1.1 }}>{title}</div>
+      <p style={{ fontSize: "0.82rem", color: "#5a6a7e", lineHeight: 1.75, fontWeight: 300 }}>{desc}</p>
+    </div>
+  );
+}
+
+function InterestChip({ icon, title, desc }) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        display: "flex", alignItems: "center", gap: 16,
+        padding: "18px 22px",
+        border: `1px solid ${hovered ? "#00e5ff" : "#1a2332"}`,
+        background: "#0f1923",
+        transform: hovered ? "translateX(8px)" : "translateX(0)",
+        transition: "all 0.3s ease",
+        cursor: "default",
+      }}
+    >
+      <span style={{ fontSize: "1.4rem", flexShrink: 0 }}>{icon}</span>
+      <div>
+        <div style={{ fontSize: "0.88rem", fontWeight: 500, color: "#e2eaf4", marginBottom: 3 }}>{title}</div>
+        <div style={{ fontSize: "0.76rem", color: "#5a6a7e", fontWeight: 300 }}>{desc}</div>
+      </div>
+    </div>
+  );
+}
+
+function OpenCard({ emoji, title, desc }) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        background: hovered ? "#0d1520" : "#0d1117",
+        padding: "44px 32px",
+        textAlign: "center",
+        borderRight: "1px solid #1a2332",
+        transition: "background 0.3s",
+        cursor: "default",
+      }}
+    >
+      <span style={{ fontSize: "2.4rem", display: "block", marginBottom: 16 }}>{emoji}</span>
+      <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.4rem", letterSpacing: "0.08em", color: "#e2eaf4", marginBottom: 10 }}>{title}</div>
+      <p style={{ fontSize: "0.82rem", color: "#5a6a7e", lineHeight: 1.75, fontWeight: 300 }}>{desc}</p>
+    </div>
+  );
+}
+
+function Cursor() {
+  const [pos, setPos] = useState({ x: -100, y: -100 });
+  const [ring, setRing] = useState({ x: -100, y: -100 });
+  const [big, setBig] = useState(false);
+  const posRef = useRef({ x: -100, y: -100 });
+  const ringRef = useRef({ x: -100, y: -100 });
+
+  useEffect(() => {
+    const move = (e) => { posRef.current = { x: e.clientX, y: e.clientY }; setPos({ x: e.clientX, y: e.clientY }); };
+    window.addEventListener("mousemove", move);
+    let raf;
+    const anim = () => {
+      ringRef.current.x += (posRef.current.x - ringRef.current.x) * 0.13;
+      ringRef.current.y += (posRef.current.y - ringRef.current.y) * 0.13;
+      setRing({ ...ringRef.current });
+      raf = requestAnimationFrame(anim);
+    };
+    raf = requestAnimationFrame(anim);
+
+    const enter = () => setBig(true);
+    const leave = () => setBig(false);
+    document.querySelectorAll("a,button,[data-hover]").forEach(el => { el.addEventListener("mouseenter", enter); el.addEventListener("mouseleave", leave); });
+    return () => {
+      window.removeEventListener("mousemove", move);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  return (
+    <>
+      <div style={{
+        position: "fixed", pointerEvents: "none", zIndex: 9999,
+        left: pos.x, top: pos.y,
+        width: big ? 20 : 10, height: big ? 20 : 10,
+        background: "#00e5ff", borderRadius: "50%",
+        transform: "translate(-50%,-50%)",
+        transition: "width 0.2s, height 0.2s",
+        mixBlendMode: "difference",
+      }} />
+      <div style={{
+        position: "fixed", pointerEvents: "none", zIndex: 9998,
+        left: ring.x, top: ring.y,
+        width: big ? 56 : 34, height: big ? 56 : 34,
+        border: "1px solid #00e5ff", borderRadius: "50%",
+        transform: "translate(-50%,-50%)",
+        opacity: 0.45,
+        transition: "width 0.3s, height 0.3s",
+      }} />
+    </>
+  );
+}
+
+export default function Portfolio() {
+  const [navSolid, setNavSolid] = useState(false);
+  const [termLine, setTermLine] = useState(0);
+  const termLines = [
+    { type: "comment", text: "// SRIJAN SRIVASTAV — v2025" },
+    { type: "kv", key: '"role"', val: '"Team Manager + Frontend Dev"', comma: true },
+    { type: "kv", key: '"org"', val: '"IEEE Vice Chair"', comma: true },
+    { type: "kv", key: '"stack"', val: '"React JS + Security"', comma: true },
+    { type: "kv", key: '"openToWork"', val: "true", comma: true, bool: true },
+    { type: "kv", key: '"coffee"', val: "Infinity", comma: false, num: true },
+    { type: "cmd", text: '$ git commit -m "always learning"' },
+  ];
+
+  useEffect(() => {
+    const onScroll = () => setNavSolid(window.scrollY > 40);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    if (termLine < termLines.length) {
+      const t = setTimeout(() => setTermLine(l => l + 1), 380);
+      return () => clearTimeout(t);
+    }
+  }, [termLine]);
+
+  const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+
+  // CSS injection for fonts, global styles, animations
+  useEffect(() => {
+    const style = document.createElement("style");
+    style.textContent = `
+      @import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap');
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      html { scroll-behavior: smooth; }
+      body { cursor: none; background: #080b10; font-family: 'DM Sans', sans-serif; overflow-x: hidden; }
+      @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+      @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(0,230,118,0.4); } 50% { box-shadow: 0 0 0 8px rgba(0,230,118,0); } }
+      @keyframes scan { from { top: -2px; } to { top: 100vh; } }
+      @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0; } }
+      .scanline { position:fixed; top:0; left:0; right:0; height:2px; background:rgba(0,229,255,0.1); pointer-events:none; z-index:999; animation: scan 7s linear infinite; }
+      .grid-bg::after { content:''; position:fixed; inset:0; background-image: linear-gradient(rgba(0,229,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.025) 1px,transparent 1px); background-size:64px 64px; pointer-events:none; z-index:0; }
+    `;
+    document.head.appendChild(style);
+    document.body.classList.add("grid-bg");
+    return () => { document.head.removeChild(style); document.body.classList.remove("grid-bg"); };
+  }, []);
+
+  const S = (styles) => styles; // passthrough for readability
+
+  return (
+    <div style={{ background: "#080b10", color: "#e2eaf4", minHeight: "100vh", position: "relative", zIndex: 1 }}>
+      <Cursor />
+      <div className="scanline" />
+
+      {/* NAV */}
+      <nav style={{
+        position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
+        padding: "18px 60px",
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        borderBottom: "1px solid #1a2332",
+        background: navSolid ? "rgba(8,11,16,0.92)" : "rgba(8,11,16,0.6)",
+        backdropFilter: "blur(14px)",
+        transition: "background 0.3s",
+      }}>
+        <div style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.75rem", color: "#00e5ff", letterSpacing: "0.18em", textTransform: "uppercase" }}>
+          SRIJAN.DEV
+        </div>
+        <div style={{ display: "flex", gap: 36 }}>
+          {["about", "roles", "skills", "open-to", "contact"].map(id => (
+            <button key={id} data-hover onClick={() => scrollTo(id)} style={{
+              background: "none", border: "none", cursor: "none",
+              fontFamily: "'Space Mono', monospace", fontSize: "0.68rem",
+              color: "#5a6a7e", letterSpacing: "0.1em", textTransform: "uppercase",
+              transition: "color 0.2s",
+            }}
+              onMouseEnter={e => e.target.style.color = "#00e5ff"}
+              onMouseLeave={e => e.target.style.color = "#5a6a7e"}
+            >{id}</button>
+          ))}
+        </div>
+      </nav>
+
+      {/* HERO */}
+      <section id="about" style={{
+        minHeight: "100vh",
+        display: "grid", gridTemplateColumns: "1fr 1fr",
+        alignItems: "center",
+        padding: "120px 60px 80px",
+        gap: 60,
+        position: "relative",
+      }}>
+        {/* Ambient glow */}
+        <div style={{ position: "absolute", top: "20%", left: "5%", width: 400, height: 400, background: "radial-gradient(circle, rgba(0,229,255,0.06) 0%, transparent 70%)", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", bottom: "10%", right: "10%", width: 300, height: 300, background: "radial-gradient(circle, rgba(123,47,255,0.07) 0%, transparent 70%)", pointerEvents: "none" }} />
+
+        <div style={{ position: "relative", zIndex: 1 }}>
+          <div style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.7rem", color: "#00e5ff", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 20, display: "flex", alignItems: "center", gap: 12 }}>
+            <span style={{ width: 28, height: 1, background: "#00e5ff", display: "inline-block" }} />
+            Full Stack of Ambition
+          </div>
+          <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(4.5rem, 7vw, 8.5rem)", lineHeight: 0.9, letterSpacing: "0.02em", marginBottom: 28 }}>
+            <span style={{ color: "#5a6a7e" }}>SRIJAN</span><br />
+            <span style={{ color: "#00e5ff" }}>SRIVAS</span><br />
+            <span style={{ color: "#e2eaf4" }}>TAV</span>
+          </h1>
+          <p style={{ fontSize: "1rem", color: "#5a6a7e", lineHeight: 1.85, maxWidth: 440, marginBottom: 40, fontWeight: 300 }}>
+            Frontend developer, IEEE leader, and aspiring cybersecurity specialist. 
+            Building at the intersection of clean code, community, and digital security — one commit at a time.
+          </p>
+          <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
+            <button data-hover onClick={() => scrollTo("roles")} style={{
+              padding: "13px 30px", background: "#00e5ff", color: "#080b10",
+              fontFamily: "'Space Mono', monospace", fontSize: "0.72rem", fontWeight: 700,
+              letterSpacing: "0.12em", textTransform: "uppercase", border: "none", cursor: "none",
+              clipPath: "polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))",
+              transition: "transform 0.2s, box-shadow 0.2s",
+            }}
+              onMouseEnter={e => { e.target.style.transform = "translateY(-2px)"; e.target.style.boxShadow = "0 0 28px rgba(0,229,255,0.4)"; }}
+              onMouseLeave={e => { e.target.style.transform = ""; e.target.style.boxShadow = ""; }}
+            >
+              View Experience
+            </button>
+            <button data-hover onClick={() => scrollTo("open-to")} style={{
+              padding: "13px 30px", background: "transparent", color: "#e2eaf4",
+              fontFamily: "'Space Mono', monospace", fontSize: "0.72rem",
+              letterSpacing: "0.12em", textTransform: "uppercase",
+              border: "1px solid #1a2332", cursor: "none",
+              transition: "border-color 0.2s, color 0.2s",
+            }}
+              onMouseEnter={e => { e.target.style.borderColor = "#00e5ff"; e.target.style.color = "#00e5ff"; }}
+              onMouseLeave={e => { e.target.style.borderColor = "#1a2332"; e.target.style.color = "#e2eaf4"; }}
+            >
+              Open To Work
+            </button>
+          </div>
+        </div>
+
+        {/* Profile Card */}
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", position: "relative" }}>
+          {/* Orbiting rings */}
+          <div style={{ position: "absolute", inset: -90, pointerEvents: "none" }}>
+            <div style={{ position: "absolute", inset: 0, border: "1px solid rgba(0,229,255,0.07)", borderRadius: "50%", animation: "spin 22s linear infinite" }}>
+              <div style={{ position: "absolute", top: -4, left: "calc(50% - 4px)", width: 8, height: 8, background: "#00e5ff", borderRadius: "50%", boxShadow: "0 0 12px #00e5ff" }} />
+            </div>
+            <div style={{ position: "absolute", inset: 22, border: "1px solid rgba(123,47,255,0.07)", borderRadius: "50%", animation: "spin 35s linear infinite reverse" }}>
+              <div style={{ position: "absolute", top: -3, left: "calc(50% - 3px)", width: 6, height: 6, background: "#7b2fff", borderRadius: "50%", boxShadow: "0 0 10px #7b2fff" }} />
+            </div>
+          </div>
+
+          <div style={{
+            width: 300, border: "1px solid #1a2332", background: "#0f1923",
+            padding: "36px 32px", position: "relative", overflow: "hidden",
+          }}>
+            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: "linear-gradient(90deg, #00e5ff, #7b2fff)" }} />
+
+            <div style={{ width: 96, height: 96, borderRadius: "50%", border: "2px solid #00e5ff", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 22px", position: "relative", boxShadow: "0 0 30px rgba(0,229,255,0.2)" }}>
+              <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "2rem", color: "#00e5ff", letterSpacing: "0.05em" }}>SS</span>
+              <div style={{ position: "absolute", bottom: 4, right: 4, width: 13, height: 13, background: "#00e676", borderRadius: "50%", border: "2px solid #0f1923", animation: "pulse 2s infinite" }} />
+            </div>
+
+            <div style={{ textAlign: "center", fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.7rem", letterSpacing: "0.08em", marginBottom: 4 }}>SRIJAN SRIVASTAV</div>
+            <div style={{ textAlign: "center", fontFamily: "'Space Mono', monospace", fontSize: "0.6rem", color: "#00e5ff", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 24 }}>Frontend Dev · IEEE · Security</div>
+
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 7, justifyContent: "center" }}>
+              {["React JS", "Cybersecurity", "IEEE VP", "Social Media", "Web Dev"].map((t, i) => (
+                <span key={i} style={{
+                  padding: "3px 11px",
+                  border: `1px solid ${i < 2 ? "#00e5ff" : "#1a2332"}`,
+                  fontFamily: "'Space Mono', monospace", fontSize: "0.57rem",
+                  color: i < 2 ? "#00e5ff" : "#5a6a7e",
+                  background: i < 2 ? "rgba(0,229,255,0.05)" : "transparent",
+                  letterSpacing: "0.08em", textTransform: "uppercase",
+                }}>{t}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ROLES */}
+      <section id="roles" style={{ position: "relative", zIndex: 1 }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto", padding: "90px 60px" }}>
+          <RevealSection>
+            <div style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.68rem", color: "#00e5ff", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 14, display: "flex", alignItems: "center", gap: 12 }}>
+              <span style={{ width: 22, height: 1, background: "#00e5ff", display: "inline-block" }} /> Experience
+            </div>
+            <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(2.5rem, 5vw, 4.5rem)", letterSpacing: "0.03em", lineHeight: 1, marginBottom: 52 }}>
+              Current <span style={{ color: "#00e5ff" }}>Roles</span>
+            </h2>
+          </RevealSection>
+          <RevealSection delay={0.1}>
+            <div style={{
+              display: "grid", gridTemplateColumns: "repeat(3, 1fr)",
+              border: "1px solid #1a2332",
+              background: "#1a2332",
+              gap: 1,
+            }}>
+              {roles.map((r, i) => <RoleCard key={i} {...r} />)}
+            </div>
+          </RevealSection>
+        </div>
+      </section>
+
+      {/* SKILLS */}
+      <section id="skills" style={{ position: "relative", zIndex: 1 }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto", padding: "90px 60px" }}>
+          <RevealSection>
+            <div style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.68rem", color: "#7b2fff", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 14, display: "flex", alignItems: "center", gap: 12 }}>
+              <span style={{ width: 22, height: 1, background: "#7b2fff", display: "inline-block" }} /> Capabilities
+            </div>
+            <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(2.5rem, 5vw, 4.5rem)", letterSpacing: "0.03em", lineHeight: 1, marginBottom: 52 }}>
+              Skills & <span style={{ color: "#7b2fff" }}>Interests</span>
+            </h2>
+          </RevealSection>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60 }}>
+            {/* Left: bars + terminal */}
+            <div>
+              <RevealSection delay={0.1}>
+                <div style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.62rem", color: "#5a6a7e", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 20, borderBottom: "1px solid #1a2332", paddingBottom: 10 }}>// Core Skills</div>
+                {skills.map((s, i) => <SkillBar key={i} {...s} delay={i * 0.1} />)}
+              </RevealSection>
+
+              {/* Terminal */}
+              <RevealSection delay={0.3}>
+                <div style={{ marginTop: 36, background: "#060a0e", border: "1px solid #1a2332", overflow: "hidden" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 7, padding: "11px 18px", background: "#0f1923", borderBottom: "1px solid #1a2332" }}>
+                    {["#ff5f56", "#ffbd2e", "#27c93f"].map((c, i) => <div key={i} style={{ width: 10, height: 10, borderRadius: "50%", background: c }} />)}
+                    <span style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.6rem", color: "#5a6a7e", marginLeft: 8, letterSpacing: "0.1em" }}>whoami.json</span>
+                  </div>
+                  <div style={{ padding: "24px 26px", fontFamily: "'Space Mono', monospace", fontSize: "0.76rem", lineHeight: 2 }}>
+                    {termLines.slice(0, termLine).map((l, i) => (
+                      <div key={i}>
+                        {l.type === "comment" && <span style={{ color: "#3d5a6e" }}>{l.text}</span>}
+                        {l.type === "kv" && (
+                          <span>
+                            <span style={{ color: "#7b2fff" }}>{l.key}</span>
+                            <span style={{ color: "#5a6a7e" }}>: </span>
+                            <span style={{ color: l.bool ? "#ff3e6c" : l.num ? "#00e5ff" : "#e6b450" }}>{l.val}</span>
+                            {l.comma && <span style={{ color: "#5a6a7e" }}>,</span>}
+                          </span>
+                        )}
+                        {l.type === "cmd" && <span><span style={{ color: "#5a6a7e" }}>$ </span><span style={{ color: "#e2eaf4" }}>git commit -m "always learning"</span></span>}
+                      </div>
+                    ))}
+                    {termLine < termLines.length && (
+                      <span style={{ display: "inline-block", width: 8, height: 15, background: "#00e5ff", animation: "blink 1s infinite", verticalAlign: "middle" }} />
+                    )}
+                  </div>
+                </div>
+              </RevealSection>
+            </div>
+
+            {/* Right: interests */}
+            <div>
+              <RevealSection delay={0.15}>
+                <div style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.62rem", color: "#5a6a7e", letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 20, borderBottom: "1px solid #1a2332", paddingBottom: 10 }}>// Passions & Deep Interests</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                  {interests.map((item, i) => (
+                    <RevealSection key={i} delay={0.1 + i * 0.07}>
+                      <InterestChip {...item} />
+                    </RevealSection>
+                  ))}
+                </div>
+              </RevealSection>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* OPEN TO */}
+      <section id="open-to" style={{ background: "#0d1117", borderTop: "1px solid #1a2332", borderBottom: "1px solid #1a2332", position: "relative", zIndex: 1 }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto", padding: "90px 60px" }}>
+          <RevealSection>
+            <div style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.68rem", color: "#ff3e6c", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 14, display: "flex", alignItems: "center", gap: 12 }}>
+              <span style={{ width: 22, height: 1, background: "#ff3e6c", display: "inline-block" }} /> Availability
+            </div>
+            <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(2.5rem, 5vw, 4.5rem)", letterSpacing: "0.03em", lineHeight: 1, marginBottom: 52 }}>
+              Open <span style={{ color: "#ff3e6c" }}>To</span>
+            </h2>
+          </RevealSection>
+          <RevealSection delay={0.1}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", border: "1px solid #1a2332", background: "#1a2332", gap: 1 }}>
+              {openTo.map((o, i) => <OpenCard key={i} {...o} />)}
+            </div>
+          </RevealSection>
+        </div>
+      </section>
+
+      {/* CONTACT */}
+      <section id="contact" style={{ position: "relative", zIndex: 1 }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto", padding: "100px 60px", textAlign: "center" }}>
+          <div style={{ position: "absolute", top: "30%", left: "50%", transform: "translate(-50%,-50%)", width: 500, height: 300, background: "radial-gradient(circle, rgba(0,229,255,0.05) 0%, transparent 70%)", pointerEvents: "none" }} />
+          <RevealSection>
+            <div style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.68rem", color: "#00e5ff", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 14, display: "flex", alignItems: "center", justifyContent: "center", gap: 12 }}>
+              <span style={{ width: 22, height: 1, background: "#00e5ff", display: "inline-block" }} /> Let's Connect
+            </div>
+            <h2 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(3rem, 7vw, 6.5rem)", letterSpacing: "0.03em", lineHeight: 0.9, marginBottom: 28 }}>
+              Let's Build<br /><span style={{ color: "#00e5ff" }}>Something</span>
+            </h2>
+            <p style={{ color: "#5a6a7e", fontSize: "1rem", maxWidth: 480, margin: "0 auto 44px", lineHeight: 1.85, fontWeight: 300 }}>
+              Frontend project, cybersecurity collab, social media campaign, or an IEEE initiative — I'm ready to connect.
+            </p>
+            <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
+              <a href="mailto:srijan@dev.com" data-hover style={{
+                padding: "13px 30px", background: "#00e5ff", color: "#080b10",
+                fontFamily: "'Space Mono', monospace", fontSize: "0.72rem", fontWeight: 700,
+                letterSpacing: "0.12em", textTransform: "uppercase", textDecoration: "none",
+                clipPath: "polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))",
+                transition: "transform 0.2s, box-shadow 0.2s",
+              }}
+                onMouseEnter={e => { e.target.style.transform = "translateY(-2px)"; e.target.style.boxShadow = "0 0 28px rgba(0,229,255,0.4)"; }}
+                onMouseLeave={e => { e.target.style.transform = ""; e.target.style.boxShadow = ""; }}
+              >Get In Touch</a>
+              <a href="https://linkedin.com" data-hover style={{
+                padding: "13px 30px", background: "transparent", color: "#e2eaf4",
+                fontFamily: "'Space Mono', monospace", fontSize: "0.72rem",
+                letterSpacing: "0.12em", textTransform: "uppercase", textDecoration: "none",
+                border: "1px solid #1a2332", transition: "border-color 0.2s, color 0.2s",
+              }}
+                onMouseEnter={e => { e.target.style.borderColor = "#00e5ff"; e.target.style.color = "#00e5ff"; }}
+                onMouseLeave={e => { e.target.style.borderColor = "#1a2332"; e.target.style.color = "#e2eaf4"; }}
+              >LinkedIn</a>
+            </div>
+          </RevealSection>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer style={{ padding: "48px 60px", borderTop: "1px solid #1a2332", display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative", zIndex: 1 }}>
+        <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.8rem", letterSpacing: "0.1em" }}>
+          SRIJAN<span style={{ color: "#00e5ff" }}>.</span>DEV
+        </div>
+        <div style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.62rem", color: "#5a6a7e", letterSpacing: "0.1em", textAlign: "right", lineHeight: 1.9 }}>
+          Built with React JS · IEEE · Passion<br />
+          © 2025 Srijan Srivastav — All rights reserved
+        </div>
+      </footer>
+    </div>
   );
 }
