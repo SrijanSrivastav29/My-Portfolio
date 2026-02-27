@@ -402,8 +402,8 @@ export default function Portfolio() {
           }}>
             <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: "linear-gradient(90deg, #00e5ff, #7b2fff)" }} />
 
-            <div style={{ width: 96, height: 96, borderRadius: "50%", border: "2px solid #00e5ff", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 22px", position: "relative", boxShadow: "0 0 30px rgba(0,229,255,0.2)" }}>
-              <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "2rem", color: "#00e5ff", letterSpacing: "0.05em" }}>SS</span>
+            <div style={{ width: 96, height: 96, borderRadius: "50%", border: "2px solid #00e5ff", margin: "0 auto 22px", position: "relative", boxShadow: "0 0 30px rgba(0,229,255,0.2)", overflow: "hidden" }}>
+              <img src="/profile.png" alt="Srijan Srivastav" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
               <div style={{ position: "absolute", bottom: 4, right: 4, width: 13, height: 13, background: "#00e676", borderRadius: "50%", border: "2px solid #0f1923", animation: "pulse 2s infinite" }} />
             </div>
 
