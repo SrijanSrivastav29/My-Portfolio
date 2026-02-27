@@ -314,9 +314,7 @@ export default function Portfolio() {
         backdropFilter: "blur(14px)",
         transition: "background 0.3s",
       }}>
-        <div style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.75rem", color: "#00e5ff", letterSpacing: "0.18em", textTransform: "uppercase" }}>
-          SRIJAN.DEV
-        </div>
+
         <div style={{ display: "flex", gap: 36 }}>
           {["about", "roles", "skills", "open-to", "contact"].map(id => (
             <button key={id} data-hover onClick={() => scrollTo(id)} style={{
@@ -358,27 +356,6 @@ export default function Portfolio() {
             Frontend developer, IEEE leader, and aspiring cybersecurity specialist. 
             Building at the intersection of clean code, community, and digital security — one commit at a time.
           </p>
-          {/* Contact quick links */}
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "10px 22px", marginBottom: 28 }}>
-            {[
-              { icon: "📧", label: "srivastav.srijan@ieee.org", href: "mailto:srivastav.srijan@ieee.org" },
-              { icon: "📱", label: "+91 88539 42888", href: "tel:+918853942888" },
-              { icon: "🐙", label: "SrijanSrivastav29", href: "https://github.com/SrijanSrivastav29" },
-              { icon: "💼", label: "srijansrivastav29", href: "https://www.linkedin.com/in/srijansrivastav29" },
-            ].map((c, i) => (
-              <a key={i} href={c.href} target="_blank" rel="noreferrer" data-hover style={{
-                display: "flex", alignItems: "center", gap: 7,
-                fontFamily: "'Space Mono', monospace", fontSize: "0.62rem",
-                color: "#5a6a7e", textDecoration: "none", letterSpacing: "0.04em",
-                transition: "color 0.2s",
-              }}
-                onMouseEnter={e => e.currentTarget.style.color = "#00e5ff"}
-                onMouseLeave={e => e.currentTarget.style.color = "#5a6a7e"}
-              >
-                <span>{c.icon}</span><span>{c.label}</span>
-              </a>
-            ))}
-          </div>
           <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
             <button data-hover onClick={() => scrollTo("roles")} style={{
               padding: "13px 30px", background: "#00e5ff", color: "#080b10",
@@ -493,34 +470,7 @@ export default function Portfolio() {
                 {skills.map((s, i) => <SkillBar key={i} {...s} delay={i * 0.1} />)}
               </RevealSection>
 
-              {/* Terminal */}
-              <RevealSection delay={0.3}>
-                <div style={{ marginTop: 36, background: "#060a0e", border: "1px solid #1a2332", overflow: "hidden" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 7, padding: "11px 18px", background: "#0f1923", borderBottom: "1px solid #1a2332" }}>
-                    {["#ff5f56", "#ffbd2e", "#27c93f"].map((c, i) => <div key={i} style={{ width: 10, height: 10, borderRadius: "50%", background: c }} />)}
-                    <span style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.6rem", color: "#5a6a7e", marginLeft: 8, letterSpacing: "0.1em" }}>whoami.json</span>
-                  </div>
-                  <div style={{ padding: "24px 26px", fontFamily: "'Space Mono', monospace", fontSize: "0.76rem", lineHeight: 2 }}>
-                    {termLines.slice(0, termLine).map((l, i) => (
-                      <div key={i}>
-                        {l.type === "comment" && <span style={{ color: "#3d5a6e" }}>{l.text}</span>}
-                        {l.type === "kv" && (
-                          <span>
-                            <span style={{ color: "#7b2fff" }}>{l.key}</span>
-                            <span style={{ color: "#5a6a7e" }}>: </span>
-                            <span style={{ color: l.bool ? "#ff3e6c" : l.num ? "#00e5ff" : "#e6b450" }}>{l.val}</span>
-                            {l.comma && <span style={{ color: "#5a6a7e" }}>,</span>}
-                          </span>
-                        )}
-                        {l.type === "cmd" && <span><span style={{ color: "#5a6a7e" }}>$ </span><span style={{ color: "#e2eaf4" }}>git commit -m "always learning"</span></span>}
-                      </div>
-                    ))}
-                    {termLine < termLines.length && (
-                      <span style={{ display: "inline-block", width: 8, height: 15, background: "#00e5ff", animation: "blink 1s infinite", verticalAlign: "middle" }} />
-                    )}
-                  </div>
-                </div>
-              </RevealSection>
+
             </div>
 
             {/* Right: interests */}
@@ -610,7 +560,7 @@ export default function Portfolio() {
       {/* FOOTER */}
       <footer style={{ padding: "48px 60px", borderTop: "1px solid #1a2332", display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative", zIndex: 1 }}>
         <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "1.8rem", letterSpacing: "0.1em" }}>
-          SRIJAN<span style={{ color: "#00e5ff" }}>.</span>DEV
+          SRIJAN<span style={{ color: "#00e5ff" }}> </span>SRIVASTAV
         </div>
         <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
           {[
