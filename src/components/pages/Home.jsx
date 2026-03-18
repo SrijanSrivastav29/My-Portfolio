@@ -5,7 +5,7 @@ const roles = [
   { icon: "🎓", company: "IEEE UNS — VBSPU", title: "Chair", desc: "Steering IEEE community initiatives, organizing tech events, and representing the student chapter at institutional level.", color: "#7b2fff" },
   { icon: "🛠️", company: "TechnoHacks", title: "Web Dev Intern", desc: "Hands-on internship focused on modern web development practices and real-world project delivery.", color: "#ff3e6c" },
   { icon: "📣", company: "Passion", title: "Social Media Management", desc: "Crafting digital narratives, growing communities, and building brand presence through strategic content.", color: "#7b2fff" },
-  { icon: "🔐", company: "Deep Interest", title: "Cybersecurity", desc: "Exploring web security, ethical hacking, and secure coding at the intersection of web dev and infosec.", color: "#ff3e6c" },
+  { icon: "🔐", company: "Deep Interest", title: "Cybersecurity", desc: "Exploring web security, ethical hacking, and secure coding at the intersection of web development and infosec.", color: "#ff3e6c" },
   { icon: null, logo: "/src/assets/images/Sricore.png", company: "SriCore", title: "Founder", desc: "Building SriCore — a tech venture at the intersection of development, security, and digital innovation.", color: "#00e5ff", link: "https://sricore.com" },
 ];
 
@@ -389,7 +389,7 @@ export default function Portfolio() {
               <div style={{ position: "absolute", bottom: -8, right: -8, width: 32, height: 32, borderBottom: "2px solid #7b2fff", borderRight: "2px solid #7b2fff", zIndex: 2 }} />
 
               <img
-                src="/src/assets/images/profile.png"
+                src="/assets/images/profile.png"
                 alt="Srijan Srivastav"
                 style={{
                   width: "100%",
